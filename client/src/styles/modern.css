@@ -149,6 +149,33 @@ a:hover {
   text-decoration: underline;
 }
 
+/* ===== Background Utilities ===== */
+.bg-gradient-modern {
+  background: linear-gradient(135deg, var(--neutral-50) 0%, var(--neutral-100) 50%, var(--primary-light) 100%);
+  min-height: 100vh;
+}
+
+/* ===== Text Color Utilities ===== */
+.text-primary {
+  color: var(--primary);
+}
+
+.text-neutral-600 {
+  color: var(--neutral-600);
+}
+
+.text-neutral-700 {
+  color: var(--neutral-700);
+}
+
+.text-neutral-900 {
+  color: var(--neutral-900);
+}
+
+.text-error {
+  color: var(--error);
+}
+
 /* ===== Layout Components ===== */
 
 /* Modern Sidebar */
@@ -612,6 +639,20 @@ a:hover {
   color: var(--neutral-400);
 }
 
+.input-dark {
+  background-color: var(--neutral-50);
+  border-color: var(--neutral-300);
+}
+
+.input-dark:focus {
+  background-color: white;
+  border-color: var(--primary);
+}
+
+.border-error {
+  border-color: var(--error) !important;
+}
+
 .form-group {
   margin-bottom: var(--space-4);
 }
@@ -691,6 +732,39 @@ a:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+/* ===== Alerts ===== */
+.alert {
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.alert-error {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--error);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.alert-success {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--success);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.alert-warning {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: var(--warning);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.alert-info {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: var(--info);
+  border: 1px solid rgba(59, 130, 246, 0.2);
 }
 
 /* ===== Badges ===== */
@@ -1028,4 +1102,151 @@ a:hover {
   /* Light blue glow and subtle elevation */
   transform: translateY(-2px) scale(1.01);
   z-index: 2;
+}
+
+/* ===== Missing Classes for Login/Register ===== */
+
+/* Modern Card Variant */
+.card-modern {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: var(--radius-2xl);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  transition: all var(--transition-fast);
+}
+
+.card-modern:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+}
+
+/* Neumorph Shadows */
+.shadow-neumorph {
+  box-shadow: 
+    8px 8px 16px rgba(163, 177, 198, 0.6),
+    -8px -8px 16px rgba(255, 255, 255, 0.5);
+}
+
+.shadow-neumorph-lg {
+  box-shadow: 
+    12px 12px 24px rgba(163, 177, 198, 0.6),
+    -12px -12px 24px rgba(255, 255, 255, 0.5);
+}
+
+.shadow-neumorph-sm {
+  box-shadow: 
+    4px 4px 8px rgba(163, 177, 198, 0.6),
+    -4px -4px 8px rgba(255, 255, 255, 0.5);
+}
+
+/* Input Dark Variant */
+.input-dark {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1.5px solid var(--neutral-300);
+  color: var(--neutral-800);
+  transition: all var(--transition-fast);
+}
+
+.input-dark:focus {
+  background: white;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Button Primary Enhanced */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  border: none;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Animations */
+.animate-fade-in {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Alert Styles */
+.alert {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+  font-weight: 500;
+}
+
+.alert-error {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--error);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* Primary Color Variants */
+.text-primary-dark {
+  color: var(--primary-dark);
+}
+
+.hover\:text-primary-dark:hover {
+  color: var(--primary-dark);
+}
+
+/* Border Error State */
+.border-error {
+  border-color: var(--error) !important;
+}
+
+.ring-error {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+/* Drop Shadow */
+.drop-shadow-lg {
+  filter: drop-shadow(0 10px 8px rgba(0, 0, 0, 0.04)) drop-shadow(0 4px 3px rgba(0, 0, 0, 0.1));
+}
+
+/* Backdrop Blur */
+.backdrop-blur-md {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.backdrop-blur-2xl {
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
 }

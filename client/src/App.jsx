@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, Outlet, Navigate } from 'react-router-dom';
+import { useUser } from './context/UserContext';
 import UserDashboard from './components/UserDashboard';
 import Chatbot from './components/Chatbot';
 import HealthTips from './components/HealthTips';
@@ -7,16 +8,23 @@ import MedicineReminder from './components/MedicineReminder';
 import BlogFeed from './components/BlogFeed';
 import DoctorFinder from './components/DoctorFinder';
 import AdminDashboard from './components/AdminDashboard';
-
-const user = { name: 'Sudit', email: 'sudit@health.com', role: 'User' };
+import ProfileSettings from './components/ProfileSettings';
+import HealthJournal from './components/HealthJournal';
+import AnalyticsDashboard from './components/AnalyticsDashboard';
+import Login from './components/Login';
+import Register from './components/Register';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const navLinks = [
   { to: '/', label: 'Dashboard' },
   { to: '/chatbot', label: 'AI Chatbot' },
   { to: '/tips', label: 'Health Tips & Goals' },
   { to: '/reminder', label: 'Medicine Reminder' },
+  { to: '/journal', label: 'Health Journal' },
   { to: '/blog', label: 'Blog/News Feed' },
   { to: '/doctors', label: 'Doctor Finder' },
+  { to: '/analytics', label: 'Analytics' },
+  { to: '/profile', label: 'Profile Settings' },
   { to: '/admin', label: 'Admin Dashboard', admin: true },
 ];
 
@@ -24,6 +32,7 @@ function UserLayout() {
   const location = useLocation();
   const [profileOpen, setProfileOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const { userData, logoutUser } = useUser();
   // Get current page name
   const currentPage = navLinks.find(l => l.to === location.pathname)?.label || 'Dashboard';
   
@@ -85,11 +94,11 @@ function UserLayout() {
               onClick={() => setProfileOpen(!profileOpen)}
             >
               <div className="user-info">
-                <div className="user-name">{user.name}</div>
-                <div className="user-role">{user.role}</div>
+                <div className="user-name">{userData.profile.name}</div>
+                <div className="user-role">User</div>
               </div>
               <div className="avatar">
-                {user.name[0]}
+                {userData.profile.name[0]}
               </div>
             </button>
             {/* Profile popover */}
@@ -102,24 +111,36 @@ function UserLayout() {
                 zIndex: 100
               }}>
                 <div className="card-header">
-                  <h4 className="text-xl font-bold text-primary">{user.name}</h4>
+                  <h4 className="text-xl font-bold text-primary">{userData.profile.name}</h4>
                 </div>
                 <div className="mb-4">
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-muted">Email:</span>
-                    <span>{user.email}</span>
+                    <span>{userData.profile.email}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-muted">Role:</span>
-                    <span className="badge badge-primary">{user.role}</span>
+                    <span className="badge badge-primary">User</span>
                   </div>
                 </div>
-                <button 
-                  className="btn btn-primary w-full" 
-                  onClick={() => setProfileOpen(false)}
-                >
-                  Close
-                </button>
+                <div className="flex gap-2">
+                  <Link 
+                    to="/profile"
+                    className="btn btn-outline flex-1" 
+                    onClick={() => setProfileOpen(false)}
+                  >
+                    Edit Profile
+                  </Link>
+                  <button 
+                    className="btn btn-primary flex-1" 
+                    onClick={() => {
+                      logoutUser();
+                      setProfileOpen(false);
+                    }}
+                  >
+                    Logout
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -141,15 +162,34 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route element={<UserLayout />}>
-          <Route path="/" element={<UserDashboard />} />
+        {/* Always redirect / to /register unless authenticated */}
+        <Route path="/" element={<Navigate to="/register" replace />} />
+        {/* Redirect /login to /register if not authenticated */}
+        <Route path="/login" element={<Login />} />
+        {/* Register is always public */}
+        <Route path="/register" element={<Register />} />
+        {/* Protected routes */}
+        <Route element={
+          <ProtectedRoute>
+            <UserLayout />
+          </ProtectedRoute>
+        }>
+          <Route path="/dashboard" element={<UserDashboard />} />
           <Route path="/chatbot" element={<Chatbot />} />
           <Route path="/tips" element={<HealthTips />} />
           <Route path="/reminder" element={<MedicineReminder />} />
+          <Route path="/journal" element={<HealthJournal />} />
           <Route path="/blog" element={<BlogFeed />} />
           <Route path="/doctors" element={<DoctorFinder />} />
+          <Route path="/analytics" element={<AnalyticsDashboard />} />
+          <Route path="/profile" element={<ProfileSettings />} />
         </Route>
-        <Route path="/admin" element={<AdminDashboard />} />
+        {/* Admin route - also protected */}
+        <Route path="/admin" element={
+          <ProtectedRoute>
+            <AdminDashboard />
+          </ProtectedRoute>
+        } />
       </Routes>
     </Router>
   );
