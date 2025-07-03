@@ -162,8 +162,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Always redirect / to /register unless authenticated */}
-        <Route path="/" element={<Navigate to="/register" replace />} />
+        {/* Always redirect / to /dashboard if authenticated, otherwise to /register */}
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
         {/* Redirect /login to /register if not authenticated */}
         <Route path="/login" element={<Login />} />
         {/* Register is always public */}

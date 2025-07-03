@@ -81,8 +81,8 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-modern px-4 py-8">
-      <div className="w-full max-w-2xl mx-auto"> {/* Changed max-w-lg to max-w-2xl for laptop view */}
+    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-modern px-4 py-8 register-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', width: '100%' }}>
+      <div className="w-full max-w-2xl mx-auto register-content" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}> {/* Changed max-w-lg to max-w-2xl for laptop view */}
         <div className="text-center mb-8">
           <div className="mx-auto h-14 w-14 flex items-center justify-center rounded-full bg-primary shadow-neumorph text-white text-3xl font-bold mb-4 backdrop-blur-md">
             <span role="img" aria-label="register">📝</span>

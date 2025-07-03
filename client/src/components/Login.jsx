@@ -10,7 +10,7 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { loginUser } = useUser();
-  const from = location.state?.from?.pathname || '/';
+  const from = location.state?.from?.pathname || '/dashboard';
 
   useEffect(() => {
     // Add auth-page class to root element
@@ -77,8 +77,8 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-modern px-4">
-      <div className="w-full max-w-2xl mx-auto"> {/* Changed max-w-md to max-w-2xl for laptop view */}
+    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-modern px-4 py-8 login-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', width: '100%' }}>
+      <div className="w-full max-w-2xl mx-auto login-content" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}> {/* Changed max-w-md to max-w-2xl for laptop view */}
         <div className="text-center mb-8">
           <div className="mx-auto h-14 w-14 flex items-center justify-center rounded-full bg-primary shadow-neumorph text-white text-3xl font-bold mb-4 backdrop-blur-md">
             <span role="img" aria-label="logo">🧺</span>

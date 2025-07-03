@@ -1250,3 +1250,45 @@ a:hover {
   backdrop-filter: blur(40px);
   -webkit-backdrop-filter: blur(40px);
 }
+
+/* Register component specific styles */
+.register-container {
+  position: relative !important;
+  width: 100% !important;
+  min-height: 100vh !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 2rem 1rem !important;
+}
+
+.register-content {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  max-width: 32rem !important;
+  margin: 0 auto !important;
+}
+
+/* Login component specific styles */
+.login-container {
+  position: relative !important;
+  width: 100% !important;
+  min-height: 100vh !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 2rem 1rem !important;
+}
+
+.login-content {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  max-width: 32rem !important;
+  margin: 0 auto !important;
+}
