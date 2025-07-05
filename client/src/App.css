@@ -7,11 +7,21 @@ body, #root {
   min-height: 100vh;
 }
 
-#root {
+/* Only apply these styles to non-auth pages */
+#root:not(.auth-page) {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+}
+
+/* For auth pages, use full width */
+#root.auth-page {
+  max-width: 100vw;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  text-align: left;
 }
 
 /* Placeholder styling for all inputs and selects */

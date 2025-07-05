@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useUser } from '../context/UserContext';
 
-// Mock data for demo - Enhanced and more complex
-const user = { 
+// Initial user data - now editable
+const initialUser = { 
   name: 'Sudit', 
   age: 25, 
   weight: 70, 
@@ -26,7 +27,7 @@ const reminders = [
   { name: 'Calcium', time: '22:00', notes: 'Before bed', taken: false, frequency: 'Daily' },
 ];
 
-const goals = [
+const initialGoals = [
   { text: 'Walk 10,000 steps', done: true, progress: 8500, target: 10000 },
   { text: 'Drink 8 glasses of water', done: false, progress: 5, target: 8 },
   { text: 'Sleep at least 7 hours', done: true, progress: 7.5, target: 7 },
@@ -34,7 +35,7 @@ const goals = [
   { text: 'Eat 5 servings of fruits/vegetables', done: true, progress: 6, target: 5 },
 ];
 
-const vitalSigns = [
+const initialVitalSigns = [
   { name: 'Heart Rate', value: 72, unit: 'bpm', status: 'normal', icon: '💓' },
   { name: 'Blood Pressure', value: '120/80', unit: 'mmHg', status: 'normal', icon: '🩸' },
   { name: 'Temperature', value: 98.6, unit: '°F', status: 'normal', icon: '🌡️' },
@@ -62,7 +63,6 @@ const healthInsights = [
 ];
 
 const nextReminder = reminders.find(r => !r.taken) || reminders[0];
-const completedGoals = goals.filter(g => g.done).length;
 const remindersTaken = reminders.filter(r => r.taken).length;
 const remindersMissed = reminders.length - remindersTaken;
 
@@ -78,15 +78,56 @@ const recentActivity = [
 const UserDashboard = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [selectedMetric, setSelectedMetric] = useState('steps');
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [editingVitals, setEditingVitals] = useState(false);
+  const [newGoal, setNewGoal] = useState({ text: '', target: '' });
+  
+  // Use centralized user data
+  const { 
+    userData, 
+    derivedData,
+    updateProfile, 
+    updateVitals, 
+    addGoal, 
+    toggleGoal, 
+    deleteGoal 
+  } = useUser();
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
+  // Handler functions
+  const handleUserUpdate = (field, value) => {
+    updateProfile({ [field]: value });
+  };
+
+  const handleVitalUpdate = (index, value) => {
+    updateVitals(index, value);
+  };
+
+  const handleAddGoal = () => {
+    if (newGoal.text && newGoal.target) {
+      addGoal({
+        text: newGoal.text,
+        target: parseInt(newGoal.target)
+      });
+      setNewGoal({ text: '', target: '' });
+    }
+  };
+
+  const handleToggleGoal = (goalId) => {
+    toggleGoal(goalId);
+  };
+
+  const handleDeleteGoal = (goalId) => {
+    deleteGoal(goalId);
+  };
+
   const getBMI = () => {
-    const heightInM = user.height / 100;
-    return (user.weight / (heightInM * heightInM)).toFixed(1);
+    const heightInM = userData.profile.height / 100;
+    return (userData.profile.weight / (heightInM * heightInM)).toFixed(1);
   };
 
   const getHealthScoreColor = (score) => {
@@ -111,7 +152,9 @@ const UserDashboard = () => {
       {/* Header */}
       <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h2 className="text-3xl md:text-4xl font-bold text-primary mb-1">Welcome back, {user.name}! 👋</h2>
+          <div className="flex items-center gap-4 mb-1">
+            <h2 className="text-3xl md:text-4xl font-bold text-primary">Welcome back, {userData.profile.name}! 👋</h2>
+          </div>
           <p style={{ color: '#fff', fontWeight: 600, textShadow: '0 1px 4px #000' }} className="text-base md:text-lg">
             {currentTime.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
@@ -121,7 +164,7 @@ const UserDashboard = () => {
         </div>
         <div className="flex gap-4">
           <div
-            className={`text-2xl md:text-3xl font-bold flex items-center justify-center shadow-lg border-2 ${getHealthScoreColor(user.healthScore)}`}
+            className={`text-2xl md:text-3xl font-bold flex items-center justify-center shadow-lg border-2 ${getHealthScoreColor(userData.profile.healthScore)}`}
             style={{
               background: 'rgba(30, 30, 30, 0.85)',
               borderRadius: '1.5rem',
@@ -141,7 +184,7 @@ const UserDashboard = () => {
               zIndex: 2
             }}
           >
-            {user.healthScore}/100
+            {userData.profile.healthScore}/100
           </div>
         </div>
       </div>
@@ -151,22 +194,22 @@ const UserDashboard = () => {
         <div className="card card-stat p-4 flex flex-col items-center">
           <div className="text-lg font-semibold">BMI</div>
           <div className="text-2xl font-bold">{getBMI()}</div>
-          <div className="text-xs text-neutral-500">Height: {user.height}cm, Weight: {user.weight}kg</div>
+          <div className="text-xs text-neutral-500">Height: {userData.profile.height}cm, Weight: {userData.profile.weight}kg</div>
         </div>
         <div className="card card-stat p-4 flex flex-col items-center">
           <div className="text-lg font-semibold">Blood Type</div>
-          <div className="text-2xl font-bold">{user.bloodType}</div>
-          <div className="text-xs text-neutral-500">Last checkup: {user.lastCheckup}</div>
+          <div className="text-2xl font-bold">{userData.profile.bloodType}</div>
+          <div className="text-xs text-neutral-500">Last checkup: {userData.profile.lastCheckup}</div>
         </div>
         <div className="card card-stat p-4 flex flex-col items-center">
           <div className="text-lg font-semibold">Goals Today</div>
-          <div className="text-2xl font-bold">{completedGoals}/{goals.length}</div>
-          <div className="text-xs text-neutral-500">{Math.round((completedGoals/goals.length)*100)}% completion</div>
+          <div className="text-2xl font-bold">{derivedData.completedGoals}/{derivedData.totalGoals}</div>
+          <div className="text-xs text-neutral-500">{derivedData.goalCompletionRate}% completion</div>
         </div>
         <div className="card card-stat p-4 flex flex-col items-center">
           <div className="text-lg font-semibold">Medicines Taken</div>
-          <div className="text-2xl font-bold text-green-600">{remindersTaken}</div>
-          <div className="text-xs text-neutral-500">Missed: {remindersMissed}</div>
+          <div className="text-2xl font-bold text-green-600">{derivedData.takenMedications}</div>
+          <div className="text-xs text-neutral-500">Missed: {derivedData.totalMedications - derivedData.takenMedications}</div>
         </div>
       </div>
 
@@ -174,12 +217,29 @@ const UserDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {/* Vitals */}
         <div className="card card-gradient p-4 flex flex-col">
-          <h3 className="text-xl font-semibold mb-2 text-primary">📊 Vitals</h3>
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-xl font-semibold text-primary">📊 Vitals</h3>
+            <button 
+              onClick={() => setEditingVitals(!editingVitals)}
+              className="btn btn-outline btn-xs"
+            >
+              {editingVitals ? 'Save' : 'Edit'}
+            </button>
+          </div>
           <div className="grid grid-cols-2 gap-2">
-            {vitalSigns.map((vital, idx) => (
+            {userData.healthData.vitals.map((vital, idx) => (
               <div key={idx} className="card card-stat flex flex-col items-center p-2">
                 <div className="text-xl">{vital.icon}</div>
-                <div className="font-bold">{vital.value} <span className="text-xs text-neutral-500">{vital.unit}</span></div>
+                {editingVitals ? (
+                  <input
+                    type="text"
+                    value={vital.value}
+                    onChange={(e) => handleVitalUpdate(idx, e.target.value)}
+                    className="input input-dark text-center w-20 h-8 text-sm mb-1"
+                  />
+                ) : (
+                  <div className="font-bold">{vital.value} <span className="text-xs text-neutral-500">{vital.unit}</span></div>
+                )}
                 <div className="text-xs text-neutral-600">{vital.name}</div>
                 <div className={`mt-1 text-xs px-2 py-1 rounded-full ${
                   vital.status === 'normal' ? 'bg-green-100 text-green-800' :
@@ -195,11 +255,55 @@ const UserDashboard = () => {
         {/* Goals */}
         <div className="card card-gradient p-4 flex flex-col">
           <h3 className="text-xl font-semibold mb-2 text-primary">🎯 Goals</h3>
+          
+          {/* Add New Goal */}
+          <div className="mb-3 p-2 bg-neutral-50 rounded-lg">
+            <div className="flex gap-2 mb-2">
+              <input
+                type="text"
+                placeholder="New goal..."
+                value={newGoal.text}
+                onChange={(e) => setNewGoal({...newGoal, text: e.target.value})}
+                className="input input-dark flex-1 h-8 text-sm"
+              />
+              <input
+                type="number"
+                placeholder="Target"
+                value={newGoal.target}
+                onChange={(e) => setNewGoal({...newGoal, target: e.target.value})}
+                className="input input-dark w-20 h-8 text-sm"
+              />
+            </div>
+            <button onClick={handleAddGoal} className="btn btn-primary btn-xs w-full">
+              Add Goal
+            </button>
+          </div>
+
           <div className="space-y-2">
-            {goals.map((goal, idx) => (
+            {userData.healthData.goals.map((goal, idx) => (
               <div key={idx} className="flex justify-between items-center bg-neutral-50 rounded-lg p-2">
-                <span className="font-medium">{goal.text}</span>
-                <span className={`text-xs ${goal.done ? 'text-green-600' : 'text-neutral-600'}`}>{goal.progress}/{goal.target} {goal.done ? '✅' : '⏳'}</span>
+                <div className="flex items-center gap-2 flex-1">
+                  <input
+                    type="checkbox"
+                    checked={goal.done}
+                    onChange={() => handleToggleGoal(goal.id)}
+                    className="w-4 h-4"
+                  />
+                  <span className={`font-medium ${goal.done ? 'line-through text-neutral-500' : ''}`}>
+                    {goal.text}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`text-xs ${goal.done ? 'text-green-600' : 'text-neutral-600'}`}>
+                    {goal.progress}/{goal.target} {goal.done ? '✅' : '⏳'}
+                  </span>
+                  <button 
+                    onClick={() => handleDeleteGoal(goal.id)}
+                    className="text-red-500 hover:text-red-700 text-xs"
+                  >
+                    ✕
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -208,7 +312,7 @@ const UserDashboard = () => {
         <div className="card card-gradient p-4 flex flex-col">
           <h3 className="text-xl font-semibold mb-2 text-primary">💊 Reminders</h3>
           <div className="space-y-2">
-            {reminders.map((reminder, idx) => (
+            {userData.healthData.medications.map((reminder, idx) => (
               <div key={idx} className={`flex justify-between items-center rounded-lg p-2 border-l-4 ${
                 reminder.taken ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'
               }`}>
@@ -269,8 +373,8 @@ const UserDashboard = () => {
             ))}
           </div>
           <div className="flex items-end h-32 gap-2 px-2">
-            {weeklyStats[selectedMetric].map((val, idx) => {
-              const maxVal = Math.max(...weeklyStats[selectedMetric]);
+            {userData.healthData.weeklyStats[selectedMetric].map((val, idx) => {
+              const maxVal = Math.max(...userData.healthData.weeklyStats[selectedMetric]);
               const height = (val / maxVal) * 100;
               return (
                 <div key={idx} className="flex-1 flex flex-col items-center">
@@ -317,19 +421,19 @@ const UserDashboard = () => {
           "Your health journey is a marathon, not a sprint!"
         </p>
         <p className="text-base md:text-lg text-neutral-600">
-          You've completed {completedGoals} out of {goals.length} goals today. Keep up the great work!
+          You've completed {derivedData.completedGoals} out of {derivedData.totalGoals} goals today. Keep up the great work!
         </p>
         <div className="mt-4 flex justify-center gap-4">
           <div className="text-center">
-            <div className="text-xl md:text-2xl font-bold text-green-600">{remindersTaken}</div>
+            <div className="text-xl md:text-2xl font-bold text-green-600">{derivedData.takenMedications}</div>
             <div className="text-xs md:text-sm text-neutral-600">Medicines Taken</div>
           </div>
           <div className="text-center">
-            <div className="text-xl md:text-2xl font-bold text-blue-600">{weeklyStats.steps[6]}</div>
+            <div className="text-xl md:text-2xl font-bold text-blue-600">{userData.healthData.weeklyStats.steps[6]}</div>
             <div className="text-xs md:text-sm text-neutral-600">Steps Today</div>
           </div>
           <div className="text-center">
-            <div className="text-xl md:text-2xl font-bold text-purple-600">{user.healthScore}</div>
+            <div className="text-xl md:text-2xl font-bold text-purple-600">{userData.profile.healthScore}</div>
             <div className="text-xs md:text-sm text-neutral-600">Health Score</div>
           </div>
         </div>
